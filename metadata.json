@@ -1,0 +1,6 @@
+{
+  "name": "Pakistan Weather",
+  "description": "Full-featured weather application for Pakistan with 7-day forecasts, hourly wind and humidity levels, local map interface, local push simulated climate alerts, robust email/Google simulation auth, and real-time Gemini travel advisor.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

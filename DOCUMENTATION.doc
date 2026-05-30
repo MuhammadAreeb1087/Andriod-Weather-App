@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Pakistan Weather Hub Technical Documentation</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            line-height: 1.6;
+            margin: 40px;
+            color: #333333;
+            background-color: #ffffff;
+        }
+        h1 {
+            color: #0d47a1;
+            border-bottom: 2px solid #0d47a1;
+            padding-bottom: 10px;
+            font-size: 26pt;
+            margin-top: 0;
+        }
+        h2 {
+            color: #1b5e20;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 6px;
+            font-size: 18pt;
+            margin-top: 30px;
+        }
+        h3 {
+            color: #e65100;
+            font-size: 14pt;
+            margin-top: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 11pt;
+        }
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 12px;
+        }
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+            color: #0d47a1;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .code-block {
+            background-color: #f5f5f5;
+            border-left: 4px solid #0d47a1;
+            font-family: 'Consolas', 'Courier New', monospace;
+            padding: 15px;
+            margin: 15px 0;
+            font-size: 10pt;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .highlight-box {
+            background-color: #e8f5e9;
+            border-left: 4px solid #2e7d32;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        .alert-box {
+            background-color: #fff3e0;
+            border-left: 4px solid #ef6c00;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        .text-centered {
+            text-align: center;
+        }
+        .metadata-table {
+            margin-bottom: 30px;
+        }
+        .feature-list {
+            padding-left: 20px;
+        }
+        .feature-list li {
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="text-centered">
+        <h1>PAKISTAN WEATHER HUB</h1>
+        <p style="font-size: 16pt; font-weight: bold; color: #555555; margin-top: -10px;">Comprehensive Android Technical Specification Document</p>
+        <hr style="border: 0; border-top: 3px double #0d47a1; margin: 20px 0;">
+    </div>
+
+    <h2>1. General Information & Artifact Metadata</h2>
+    <table class="metadata-table">
+        <tr>
+            <th>Specification Attribute</th>
+            <th>Detail Value</th>
+        </tr>
+        <tr>
+            <td><strong>Application Name</strong></td>
+            <td>Pakistan Weather Hub (launcher name: Pakistan Weather)</td>
+        </tr>
+        <tr>
+            <td><strong>Application Package/ID</strong></td>
+            <td><code>com.aistudio.pakweather.kqlmop</code></td>
+        </tr>
+        <tr>
+            <td><strong>Development Environment</strong></td>
+            <td>Android Studio Core (Kotlin v1.9+ / Jetpack Compose SDK)</td>
+        </tr>
+        <tr>
+            <td><strong>Architecture Pattern</strong></td>
+            <td>Model-View-ViewModel (MVVM) with Unidirectional Flow</td>
+        </tr>
+        <tr>
+            <td><strong>Integration Services</strong></td>
+            <td>Retrofit v2, OkHttp v3, Room Database DB v1.0, Google Play Location Services SDK, Google Gemini AI API</td>
+        </tr>
+        <tr>
+            <td><strong>Target Platforms</strong></td>
+            <td>Android 8.0 (API Level 26) up to Android 14 (API Level 34)</td>
+        </tr>
+    </table>
+
+    <div class="highlight-box">
+        <strong>Executive Architecture Principle:</strong> The codebase leverages a modern reactive structure. UI screens render pure states derived from the shared <code>WeatherViewModel</code>, which orchestrates offline database operations (via Room) and remote REST capabilities (via Retrofit).
+    </div>
+
+    <h2>2. System Architecture Design & Component Flow</h2>
+    <p>
+        The system conforms to professional clean separation layers, safeguarding against network performance leaks and ensuring high scalability on low-tier memory phones.
+    </p>
+    <ul>
+        <li><strong>UI Presentation Layer (Jetpack Compose):</strong> Consists of modular design fragments (<code>AuthScreen</code>, <code>WeatherDashboardScreen</code>, <code>ChatbotScreen</code>, <code>TravelSuggestionsScreen</code>). Handles navigation via type-safe animations and state routing in <code>MainActivity.kt</code>.</li>
+        <li><strong>ViewModel State Holder (WeatherViewModel):</strong> Manages screen-session states, active login caches, and exposes coroutine handles to thread database operations.</li>
+        <li><strong>Data Repository (UserRepository):</strong> Exposes Kotlin Flow outputs directly from SQLite Dao interfaces, acting as a single point of truth for user models.</li>
+        <li><strong>Remote Data Network Stack (Retrofit Clients):</strong> Separate API services query meteorology trends (Open-Meteo) and conversational recommendations (Google Gemini).</li>
+    </ul>
+
+    <h2>3. Application Manifest & Android Security Permissions</h2>
+    <p>
+        To preserve battery life and adhere to strict sandboxing requirements, permissions are explicitly declared in the compiled manifest. The app performs graceful fallback mechanisms if permissions are revoked.
+    </p>
+    <div class="code-block">
+&lt;manifest xmlns:android="http://schemas.android.com/apk/res/android"&gt;
+    &lt;uses-permission android:name="android.permission.INTERNET" /&gt;
+    &lt;uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /&gt;
+    &lt;uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /&gt;
+    &lt;uses-permission android:name="android.permission.POST_NOTIFICATIONS" /&gt;
+&lt;/manifest&gt;
+    </div>
+    <div class="alert-box">
+        <strong>Security Checkup:</strong> The <code>SecurityException</code> crash regarding "missing INTERNET permission" has been fully addressed by inserting the <code>INTERNET</code> permission into <code>AndroidManifest.xml</code>.
+    </div>
+
+    <h2>4. Persistence Layer (SQLite Database Room Setup)</h2>
+    <p>
+        Offline storage is implemented via SQLite using the Room Persistence database components. This supports biometric registers, social mocks, and session restorations.
+    </p>
+
+    <h3>4.1 User Schema (UserEntity.kt)</h3>
+    <div class="code-block">
+@Entity(tableName = "users")
+data class UserEntity(
+    @PrimaryKey val email: String,
+    val fullName: String,
+    val passwordHash: String,
+    val isGoogleLogin: Boolean = false,
+    val avatarUrl: String = "",
+    val isLoggedIn: Boolean = false,
+    val lastSelectedCity: String = "Karachi"
+)
+    </div>
+
+    <h3>4.2 Dao Interface (UserDao.kt)</h3>
+    <p>
+        Exposed functions are marked as coroutine-friendly <code>suspend</code> routines, which prevent thread blockages:
+    </p>
+    <ul>
+        <li><code>fun getActiveSession(): Flow&lt;UserEntity?&gt;</code> - Emits live-updated profiles when accounts login.</li>
+        <li><code>suspend fun insertUser(user: UserEntity)</code> - Inserts or overwrites models on account edits.</li>
+        <li><code>suspend fun clearActiveSessions()</code> - Safely resets active status to 0 on session termination.</li>
+    </ul>
+
+    <h2>5. Web Services & Networking Details</h2>
+    <p>
+        The application communicates cleanly over secure JSON REST endpoints using optimized, timeout-resilient OkHttp connections.
+    </p>
+
+    <h3>5.1 Open-Meteo Weather Integration</h3>
+    <p>
+        Retrieves real-time atmospheric measurements. Highly resilient queries map data parameters into modern layout metrics:
+    </p>
+    <table style="width:100%;">
+        <tr>
+            <th>Query Parameter</th>
+            <th>API Mapping Target</th>
+            <th>Metric Unit Represented</th>
+        </tr>
+        <tr>
+            <td><code>temperature_2m</code></td>
+            <td>Celsius Gauge</td>
+            <td>Real-time temperature recorded at 2 meters altitude</td>
+        </tr>
+        <tr>
+            <td><code>relative_humidity_2m</code></td>
+            <td>Humidity Index %</td>
+            <td>Percentage of water vapor relative to air density</td>
+        </tr>
+        <tr>
+            <td><code>wind_speed_10m</code></td>
+            <td>Wind Speed km/h</td>
+            <td>Localized velocities measured 10 meters high</td>
+        </tr>
+        <tr>
+            <td><code>weather_code</code></td>
+            <td>WMO Weather Key</td>
+            <td>Shorthand code representing WMO categories (Sunny, Stormy, etc.)</td>
+        </tr>
+    </table>
+
+    <h3>5.2 Gemini GenAI REST Client Integration</h3>
+    <p>
+        The chatbot screen connects to <code>generativelanguage.googleapis.com</code>, utilizing state-of-the-art responses. It is secured using an API Key injected and compiled into <code>BuildConfig.GEMINI_API_KEY</code>.
+    </p>
+    <div class="code-block">
+interface GeminiApiService {
+    @POST("v1beta/models/gemini-3.5-flash:generateContent")
+    suspend fun generateContent(
+        @Query("key") apiKey: String,
+        @Body request: GeminiRequest
+    ): GeminiResponse
+}
+    </div>
+
+    <h2>6. Layout and Interface Screens (Compose Modules)</h2>
+    <p>
+        Interfaces are constructed fully in Jetpack Compose, maximizing GPU hardware acceleration and dynamic fluid sizing layout rules.
+    </p>
+
+    <h3>6.1 Authentication Screen (AuthScreen.kt)</h3>
+    <p>
+        Implements twin panels (Login and Create-Account tabs) built around fluid, eye-safe glassmorphic structures:
+    </p>
+    <ul class="feature-list">
+        <li><strong>Input Validation:</strong> Verifies email formatting, password bounds (&gt;6 digits), and raises animated feedback alerts if requirements fail.</li>
+        <li><strong>Google One-Tap Federated Auth:</strong> Rich social widgets simulate social account creations on the secure Room environment securely.</li>
+    </ul>
+
+    <h3>6.2 Interactive Weather Dashboard (WeatherDashboardScreen.kt)</h3>
+    <p>
+        The core screen of the application aggregates heavy-duty data visualization:
+    </p>
+    <ul class="feature-list">
+        <li><strong>WMO Weather Indicator Panels:</strong> Correlates code variables to corresponding, high-contrast Material icons and background palettes.</li>
+        <li><strong>Automatic GPS Location Service:</strong> Coordinates retrieved from GMS Location SDK are evaluated using the high-fidelity <strong>Haversine Formula</strong> to instantly pair users with their closest Pakistani weather station.</li>
+        <li><strong>Interactive Provincial Map:</strong> Features a custom Vector Canvas mapping Pakistani geolocations (Sindh, Punjab, KP, Balochistan, Gilgit-Baltistan). Users can tap provinces or pins onto the 2D surface to dynamically update monitored sensor regions.</li>
+        <li><strong>Hazard Advisories & Sirens:</strong> Triggers prominent warning card components and Android system tray alerts on temperature heights (&gt;40°C) or severe storms.</li>
+    </ul>
+
+    <h3>6.3 Smart Weather Advisor Chatbot (ChatbotScreen.kt)</h3>
+    <p>
+        Provides a dedicated panel to discuss climate safety with Gemini:
+    </p>
+    <ul class="feature-list">
+        <li><strong>System Instruction Tuning:</strong> System constraints instruct Gemini to respond purely in the context of weather safety, road navigations, and regional clothing selections (lawn, linen, wool wear).</li>
+        <li><strong>Fluid Chat Bubble Bubbles:</strong> Renders messages on contrasting, speech-bubble boxes with timestamps.</li>
+    </ul>
+
+    <h3>6.4 Regional Travel Suggestions Screen (TravelSuggestionsScreen.kt)</h3>
+    <p>
+        A premium companion guide for travel networks in Pakistan:
+    </p>
+    <ul class="feature-list">
+        <li><strong>Transit Highway Logs:</strong> Displays live warnings and closures for major routes (M-2 Motorway, Karakoram highway, Hazara expressway) mapped to current local climates.</li>
+        <li><strong>Tourism Recommendations:</strong> Generates context-aware sightseeing and flight suggestions dynamically depending on immediate regional climate metrics.</li>
+    </ul>
+
+    <h2>7. Quality Assurance & UI Regression Verification</h2>
+    <p>
+        The project is fully integrated with automated local unit tests preventing regression on core layouts:
+    </p>
+    <ul>
+        <li><strong>Local String Consistency (ExampleRobolectricTest.kt):</strong> Robust checks maintain proper launcher and branding name specifications.</li>
+        <li><strong>UI Regression Screenshot Test (GreetingScreenshotTest.kt):</strong> Integrated visual validation verifies layout paddings and text margins.</li>
+    </ul>
+
+    <h2>8. Execution Guide & Deployment</h2>
+    <p>
+        Verify and run the compiled Android system with simple tooling tasks:
+    </p>
+    <div class="code-block">
+# Compile the app to Android APK targets
+compile_applet
+
+# Verify local logic and string references
+gradle :app:testDebugUnitTest
+    </div>
+
+    <hr style="border: 0; border-top: 1px dashed #dddddd; margin-top: 40px;">
+    <p class="text-centered" style="font-size: 9pt; color: #888888;">&copy; Pakistan Weather Hub Technical Team. Generated via Android Build Assistant.</p>
+
+</body>
+</html>
